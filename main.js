@@ -1,4 +1,4 @@
-/* WIland tester page: the download button (always the newest setup) and the live island. */
+/* WIland tester page: the download button (always the newest setup), the live island and the feature pictures. */
 (() => {
   'use strict';
 
@@ -8,7 +8,7 @@
   const CACHE = 'wiland.latest';
   const CACHE_MS = 10 * 60 * 1000;
 
-  const dl = document.getElementById('dl');
+  const links = [...document.querySelectorAll('.js-dl')];
   const meta = document.getElementById('dlMeta');
   const started = document.getElementById('dlStarted');
 
@@ -23,19 +23,15 @@
   const pickRelease = json => {
     const exe = (json.assets || []).find(a => /^WIland-Setup-.+\.exe$/i.test(a.name));
     if (!exe) return null;
-    return {
-      url: exe.browser_download_url, name: exe.name, size: exe.size,
-      version: String(json.tag_name || '').replace(/^v/, ''), date: json.published_at,
-    };
+    return { url: exe.browser_download_url, name: exe.name, size: exe.size, version: String(json.tag_name || '').replace(/^v/, ''), date: json.published_at };
   };
 
   const show = rel => {
-    if (!rel) { dl.href = FALLBACK; meta.textContent = 'Opens the download page'; return; }
-    dl.href = rel.url;
-    dl.dataset.direct = '1';
+    if (!rel) { links.forEach(a => { a.href = FALLBACK; }); return; }
+    links.forEach(a => { a.href = rel.url; a.dataset.direct = '1'; });
     const mb = Math.round(rel.size / 1048576);
     const date = rel.date ? new Date(rel.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
-    meta.textContent = ['Version ' + rel.version, mb + ' MB', date].filter(Boolean).join('  ·  ');
+    meta.textContent = ['Version ' + rel.version, mb + ' MB', date, 'Windows 10 or 11, 64-bit'].filter(Boolean).join(' · ');
     document.querySelectorAll('.fname').forEach(el => { el.textContent = rel.name; });
   };
 
@@ -47,13 +43,11 @@
       .then(json => { const rel = pickRelease(json); if (rel) writeCache(rel); show(rel); })
       .catch(() => show(null));
   }
-
-  dl.addEventListener('click', () => { if (dl.dataset.direct) started.hidden = false; });
+  links.forEach(a => a.addEventListener('click', () => { if (a.dataset.direct) started.hidden = false; }));
 
   // not on a Windows PC: say so, and offer to copy the link
   const ua = navigator.userAgent;
-  const onWindows = /Windows NT/.test(ua) && !/Windows Phone/.test(ua);
-  if (!onWindows) {
+  if (!(/Windows NT/.test(ua) && !/Windows Phone/.test(ua))) {
     document.getElementById('notPc').hidden = false;
     const copy = document.getElementById('copyLink');
     copy.addEventListener('click', async () => {
@@ -69,7 +63,103 @@
   }
 
   /* ---------- the island ---------- */
-  // the app's own spring (core/spring.js) and sizes (features' size())
+  const V = window.WL_VIEWS;
+  if (!V) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const SHOULDER = 10;
+  const shoulder = h => Math.min(SHOULDER, Math.max(0, (h - 10) * 0.5));
+  const LIP = { w: 150, h: 7, r: 7 };
+  const SVG = 'http://www.w3.org/2000/svg';
+
+  // the outline: the pill with rounded bottom corners, fused to the top edge by concave shoulders
+  const outline = (w, h, r, s, closed) => {
+    const W = w + 2 * s;
+    r = Math.max(0, Math.min(r, h, w / 2));
+    const f = n => n.toFixed(2);
+    const d = `M${f(W)} 0 A${f(s)} ${f(s)} 0 0 0 ${f(W - s)} ${f(s)} L${f(W - s)} ${f(h - r)} A${f(r)} ${f(r)} 0 0 1 ${f(W - s - r)} ${f(h)} ` +
+      `L${f(s + r)} ${f(h)} A${f(r)} ${f(r)} 0 0 1 ${f(s)} ${f(h - r)} L${f(s)} ${f(s)} A${f(s)} ${f(s)} 0 0 0 0 0`;
+    return closed ? d + ' Z' : d;
+  };
+
+  let uid = 0;
+  /** One island: glass layers (shadow, blur, edge shine) and the app's own views on top. */
+  const build = (host, names) => {
+    const n = ++uid;
+    host.innerHTML =
+      `<div class="wl" data-theme="dark" data-glass="" data-level="full"><div class="part island">
+        <svg class="gl-shadow"><path fill="#000"/></svg>
+        <div class="gl-blur"></div>
+        <svg class="gl-edge"><defs><linearGradient id="wlEdge${n}" x1="0" y1="1" x2="1" y2="0">
+          <stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".14"/><stop offset="1" stop-color="#fff" stop-opacity=".3"/>
+        </linearGradient></defs><path fill="none" stroke="url(#wlEdge${n})" stroke-width="1.1"/></svg>
+        <div class="shape"></div></div></div>`;
+    const part = host.querySelector('.part');
+    const shape = part.querySelector('.shape');
+    const views = {};
+    names.forEach(name => {
+      const t = document.createElement('template');
+      t.innerHTML = V[name].html.join('');
+      views[name] = [...t.content.children];
+      views[name].forEach(el => shape.appendChild(el));
+    });
+    const blur = part.querySelector('.gl-blur'), edge = part.querySelector('.gl-edge'), shadow = part.querySelector('.gl-shadow');
+    const edgeP = edge.querySelector('path'), shadowP = shadow.querySelector('path');
+    const draw = (w, h, r) => {
+      h = Math.max(0, h); r = Math.max(0, Math.min(r, h, w / 2));
+      const s = shoulder(h), W = w + 2 * s, left = -w / 2 - s;
+      const box = el => { el.style.left = left + 'px'; el.style.width = W + 'px'; el.style.height = h + 'px'; };
+      box(blur);
+      blur.style.clipPath = `path('${outline(w, h, r, s, true)}')`;
+      [edge, shadow].forEach(el => { box(el); el.setAttribute('viewBox', `0 0 ${W} ${h}`); });
+      edgeP.setAttribute('d', outline(w, h, r, s, false));
+      shadowP.setAttribute('d', outline(w, h, r, s, true));
+      shape.style.left = -w / 2 + 'px'; shape.style.width = w + 'px'; shape.style.height = h + 'px';
+      shape.style.borderRadius = `0 0 ${r}px ${r}px`;
+    };
+    return { part, shape, views, draw };
+  };
+
+  // keep the clock pill and Today on the real date and time
+  const pad = n => String(n).padStart(2, '0');
+  const flipDigits = str => [...str].map(c => `<span class="fc${c === ':' ? ' colon' : ''}"><span class="fi">${c}</span></span>`).join('');
+  const liveDates = root => {
+    const d = new Date();
+    const h12 = d.getHours() % 12 || 12, ap = d.getHours() < 12 ? 'AM' : 'PM';
+    const hm = h12 + ':' + pad(d.getMinutes());
+    root.querySelectorAll('.clk-d').forEach(el => { el.textContent = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); });
+    root.querySelectorAll('.clk-t').forEach(el => { if (el.dataset.hm !== hm) { el.dataset.hm = hm; el.innerHTML = flipDigits(hm); } });
+    root.querySelectorAll('.clk-ap').forEach(el => { el.textContent = ap; });
+    root.querySelectorAll('.td-clock').forEach(el => { el.textContent = hm + ' ' + ap; });
+    root.querySelectorAll('.td-date').forEach(el => { el.textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); });
+    root.querySelectorAll('.td-week').forEach(el => {
+      const key = d.toDateString();
+      if (el.dataset.key === key) return;
+      el.dataset.key = key;
+      const mon = new Date(d); mon.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+      el.innerHTML = Array.from({ length: 7 }, (_, i) => {
+        const x = new Date(mon); x.setDate(mon.getDate() + i);
+        const today = x.toDateString() === key;
+        return `<button class="td-d${today ? ' today' : ''}" type="button" tabindex="-1"><span class="wd">${x.toLocaleDateString('en-US', { weekday: 'short' })}</span><b>${x.getDate()}</b><i class="td-ev"></i></button>`;
+      }).join('');
+    });
+  };
+
+  /* the feature pictures: each page standing open, as a still */
+  const fits = [];
+  document.querySelectorAll('.feat-pic').forEach(pic => {
+    const name = pic.dataset.view;
+    if (!V[name]) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'island-wrap';
+    pic.appendChild(wrap);
+    const isl = build(wrap, [name]);
+    isl.views[name].forEach(el => { el.classList.add('on'); el.style.left = '0px'; });
+    isl.draw(V[name].w, V[name].h, V[name].r);
+    liveDates(wrap);
+    fits.push(() => wrap.style.setProperty('--k', Math.min(1.25, (pic.clientWidth - 40) / V[name].w).toFixed(3)));
+  });
+
+  /* the live island in the hero */
   class Spring {
     constructor(x, k, z) { this.x = x; this.v = 0; this.target = x; this.k = k; this.z = z; }
     to(t, k, z) { this.target = t; this.k = k; this.z = z; }
@@ -84,67 +174,50 @@
       return true;
     }
   }
+  // the app's springs (core/island.js): growing has a subtle overshoot, shrinking settles
   const GROW = { k: 250, z: 0.7 }, SHRINK = { k: 340, z: 0.97 };
-  const SIZES = {
-    lip: { w: 150, h: 7, r: 7 },
-    time: { w: 250, h: 36, r: 18 },
-    media: { w: 290, h: 36, r: 18 },
-    mediaPage: { w: 420, h: 170, r: 30 },
-    timer: { w: 270, h: 36, r: 18 },
-    shelf: { w: 330, h: 72, r: 28 },
-  };
-  const CYCLE = [['time', 3200], ['media', 2600], ['mediaPage', 4400], ['timer', 3200], ['shelf', 3000]];
-  const SHOULDER = 10;
-  const shoulder = h => Math.min(SHOULDER, Math.max(0, (h - 10) * 0.5));
+  const PAGES = ['player', 'timer', 'today', 'controls', 'shelf', 'clipboard'];
+  const CYCLE = [['pill', 3200], ['player', 4200], ['timerPill', 3000], ['timer', 4200], ['pill', 2400], ['today', 3800], ['controls', 3800], ['shelf', 3800], ['clipboard', 3800]];
 
-  const wrap = document.getElementById('islandWrap');
-  const island = document.getElementById('island');
-  const shape = island.querySelector('.shape');
-  const shl = island.querySelector('.shl'), shr = island.querySelector('.shr');
-  const views = {};
-  island.querySelectorAll('.view').forEach(v => {
-    const s = SIZES[v.dataset.view];
-    v.style.width = s.w + 'px'; v.style.height = s.h + 'px';
-    views[v.dataset.view] = v;
-  });
+  const heroWrap = document.getElementById('islandWrap');
+  const isl = build(heroWrap, ['pill', 'player', 'timerPill', 'timer', 'today', 'controls', 'shelf', 'clipboard']);
+  const wl = heroWrap.querySelector('.wl');
+  const sp = { w: new Spring(LIP.w, 250, .7), h: new Spring(LIP.h, 250, .7), r: new Spring(LIP.r, 250, .7) };
+  let current = null, step = -1, cycleT = 0, hoverT = 0, open = false, raf = 0, last = 0;
 
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
-  const sp = { w: new Spring(150, 250, .7), h: new Spring(7, 250, .7), r: new Spring(7, 250, .7) };
-  let current = 'lip', step = -1, cycleT = 0, hovering = false, raf = 0, last = 0;
-
+  const size = name => (name ? V[name] : LIP);
   const go = name => {
-    const t = SIZES[name], c = SIZES[current];
+    const t = size(name), c = size(current);
     const f = t.w * t.h >= c.w * c.h ? GROW : SHRINK;
-    for (const key of ['w', 'h', 'r']) {
-      if (reduce.matches) sp[key].snap(t[key]); else sp[key].to(t[key], f.k, f.z);
-    }
-    if (views[current]) views[current].classList.remove('on');
-    if (views[name]) views[name].classList.add('on');
+    for (const key of ['w', 'h', 'r']) { if (reduce.matches) sp[key].snap(t[key]); else sp[key].to(t[key], f.k, f.z); }
+    if (current) isl.views[current].forEach(el => el.classList.remove('on'));
+    if (name) isl.views[name].forEach(el => el.classList.add('on'));
+    wl.dataset.level = !name ? 'rest' : PAGES.includes(name) ? 'full' : 'mid';
     current = name;
     kick();
   };
 
-  const draw = () => {
-    const w = sp.w.x, h = Math.max(0, sp.h.x), r = Math.max(0, Math.min(sp.r.x, h, w / 2));
-    shape.style.width = w + 'px'; shape.style.height = h + 'px'; shape.style.left = -w / 2 + 'px';
-    shape.style.borderRadius = `0 0 ${r}px ${r}px`;
-    const k = shoulder(h) / SHOULDER;
-    shl.style.left = (-w / 2 - SHOULDER) + 'px'; shr.style.left = (w / 2) + 'px';
-    shl.style.transform = shr.style.transform = `scale(${k})`;
-    // every view rides the shape's spring, scaled by how wide the island is now against its own width
-    for (const name in views) {
-      const v = views[name], tw = SIZES[name].w;
+  // every view rides the shape's spring, scaled by how wide the island is now against its own width
+  const place = () => {
+    const w = sp.w.x;
+    for (const name in isl.views) {
+      const els = isl.views[name], tw = V[name].w;
       const s = Math.min(1.3, Math.max(.5, w / tw));
-      v.style.left = (w - tw) / 2 + 'px';
-      v.style.transform = `scale(${s})`;
+      if (name === 'pill') {
+        // the clock on the left, the song's bubble in the right end
+        els[0].style.left = '0px'; els[0].style.scale = String(s);
+        if (els[1]) { els[1].style.left = '0px'; els[1].style.translate = (w - 36) + 'px'; }
+      } else {
+        els.forEach(el => { el.style.left = (w - tw) / 2 + 'px'; el.style.scale = String(s); });
+      }
     }
   };
-
   const frame = now => {
     const dt = last ? now - last : 16; last = now;
     let moving = false;
     for (const key in sp) moving = sp[key].step(dt) || moving;
-    draw();
+    isl.draw(sp.w.x, sp.h.x, sp.r.x);
+    place();
     raf = moving ? requestAnimationFrame(frame) : 0;
     if (!moving) last = 0;
   };
@@ -152,54 +225,64 @@
 
   const next = () => {
     clearTimeout(cycleT);
-    if (hovering || document.hidden || reduce.matches) return;
+    if (open || document.hidden || reduce.matches) return;
     step = (step + 1) % CYCLE.length;
     const [name, ms] = CYCLE[step];
     go(name);
     cycleT = setTimeout(next, ms);
   };
-
-  // hover or tap opens the player page; leaving goes back to the round
-  const open = () => { hovering = true; clearTimeout(cycleT); go('mediaPage'); };
-  const close = () => {
-    hovering = false; clearTimeout(cycleT);
-    if (reduce.matches) { go('time'); return; }
-    cycleT = setTimeout(next, 500);
+  const openIsland = () => {
+    open = true; clearTimeout(cycleT);
+    if (!PAGES.includes(current)) go(current === 'timerPill' ? 'timer' : 'player');
   };
-  island.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') open(); });
-  island.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') close(); });
-  island.addEventListener('click', () => {
-    if (matchMedia('(hover: hover)').matches) return;
-    if (hovering) close(); else open();
-  });
-  document.addEventListener('visibilitychange', () => { if (!document.hidden && !hovering) next(); });
+  const closeIsland = () => {
+    open = false; clearTimeout(cycleT);
+    if (reduce.matches) { go('pill'); return; }
+    go('pill');
+    step = CYCLE.findIndex(([n]) => n === 'pill');
+    cycleT = setTimeout(next, 1600);
+  };
+  const turn = dir => {
+    const i = PAGES.indexOf(current);
+    go(PAGES[(i + dir + PAGES.length) % PAGES.length]);
+  };
 
-  // phones: the whole island scales down to fit the screen
-  const fit = () => wrap.style.setProperty('--k', Math.min(1, (innerWidth - 24) / SIZES.mediaPage.w).toFixed(3));
+  const part = isl.part;
+  part.addEventListener('pointerenter', e => {
+    if (e.pointerType !== 'mouse') return;
+    clearTimeout(hoverT); hoverT = setTimeout(openIsland, 300);
+  });
+  part.addEventListener('pointerleave', e => {
+    if (e.pointerType !== 'mouse') return;
+    clearTimeout(hoverT);
+    if (open) hoverT = setTimeout(closeIsland, 250);
+  });
+  // a click on the open island's left or right side turns the page (in the app it's a right-click)
+  part.addEventListener('click', e => {
+    if (!open) { openIsland(); return; }
+    const r = part.querySelector('.shape').getBoundingClientRect();
+    turn(e.clientX < r.left + r.width / 2 ? -1 : 1);
+  });
+  part.addEventListener('wheel', e => {
+    if (!open) return;
+    e.preventDefault();
+    if (Math.abs(e.deltaX) + Math.abs(e.deltaY) < 4 || part.dataset.wheel) return;
+    part.dataset.wheel = '1'; setTimeout(() => { delete part.dataset.wheel; }, 380);
+    turn((Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) > 0 ? 1 : -1);
+  }, { passive: false });
+  document.addEventListener('pointerdown', e => { if (open && e.pointerType !== 'mouse' && !part.contains(e.target)) closeIsland(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && !open) next(); });
+
+  // phones: the island and the pictures scale to fit
+  const fit = () => {
+    heroWrap.style.setProperty('--k', Math.min(1, (innerWidth - 24) / 420).toFixed(3));
+    fits.forEach(f => f());
+  };
   addEventListener('resize', fit); fit();
 
-  draw();
-  if (reduce.matches) go('time');
+  isl.draw(LIP.w, LIP.h, LIP.r);
+  liveDates(heroWrap);
+  setInterval(() => liveDates(document), 15000);
+  if (reduce.matches) go('pill');
   else setTimeout(next, 700);
-
-  /* ---------- the live bits inside the views ---------- */
-  const elDate = document.getElementById('vDate'), elTime = document.getElementById('vTime');
-  const elTimer = document.getElementById('vTimer'), elAt = document.getElementById('mpAt'), elFill = document.getElementById('mpFill');
-  const mmss = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
-  let timerLeft = 24 * 60 + 13, songAt = 72;
-  const SONG = 228;
-  const tick = () => {
-    const d = new Date();
-    elDate.textContent = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric' });
-    elTime.textContent = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-    if (!reduce.matches) {
-      timerLeft = timerLeft > 0 ? timerLeft - 1 : 25 * 60;
-      songAt = (songAt + 1) % SONG;
-    }
-    const m = Math.floor(timerLeft / 60);
-    elTimer.textContent = String(m).padStart(2, '0') + ':' + String(timerLeft % 60).padStart(2, '0');
-    elAt.textContent = mmss(songAt);
-    elFill.style.width = (songAt / SONG * 100).toFixed(1) + '%';
-  };
-  tick(); setInterval(tick, 1000);
 })();
