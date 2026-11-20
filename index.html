@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WIland for testers</title>
+  <meta name="description" content="Download WIland, a dynamic island for Windows, and install it in three steps.">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#001A30">
+  <link rel="icon" type="image/png" href="icon.png">
+  <link rel="preload" href="fonts/Switzer-Variable.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- the screen's top edge: the island lives here, as on the desktop -->
+  <header class="hero">
+    <div class="island-wrap" id="islandWrap" aria-hidden="true">
+      <div class="island" id="island">
+        <i class="shl"></i><i class="shr"></i>
+        <div class="shape">
+
+          <div class="view" data-view="time">
+            <span class="v-left" id="vDate">Fri 20</span>
+            <span class="v-right num" id="vTime">10:42</span>
+          </div>
+
+          <div class="view" data-view="media">
+            <span class="art art-sm"></span>
+            <span class="bars"><i></i><i></i><i></i><i></i></span>
+          </div>
+
+          <div class="view view-page" data-view="mediaPage">
+            <span class="art art-lg"></span>
+            <div class="mp-body">
+              <div class="mp-title">Midnight Drive</div>
+              <div class="mp-artist">Night Shift Radio</div>
+              <div class="mp-line"><i id="mpFill"></i></div>
+              <div class="mp-times num"><span id="mpAt">1:12</span><span>3:48</span></div>
+              <div class="mp-ctrl">
+                <svg viewBox="0 0 24 24"><path d="M7 6h2v12H7zM10.5 12 19 6v12z"/></svg>
+                <svg viewBox="0 0 24 24" class="big"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M15 6h2v12h-2zM13.5 12 5 18V6z"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="view" data-view="timer">
+            <span class="v-left"><i class="tag"></i>Focus</span>
+            <span class="v-right num" id="vTimer">24:13</span>
+          </div>
+
+          <div class="view" data-view="shelf">
+            <span class="file"><svg viewBox="0 0 24 24"><path d="M6 2h8l5 5v15H6zM14 2v5h5"/></svg></span>
+            <span class="sh-body"><b>Brief.pdf</b><span>Kept on the shelf</span></span>
+            <span class="sh-count num">1</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-inner">
+      <p class="eyebrow">Tester preview</p>
+      <h1>A dynamic island<br>for Windows.</h1>
+      <p class="lede">A small black island at the top of your screen that opens into what's going on: the song playing, your timers, files you've set aside, your clipboard and a quick launcher.</p>
+
+      <div class="get">
+        <a class="dl" id="dl" href="https://github.com/ne-wtn/WIland-Releases/releases/latest">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4.5 10 3.5v8H3zM11 3.4 21 2v9.5H11zM3 12.5h7v8l-7-1zM11 12.5h10V22l-10-1.4z"/></svg>
+          <span>Download for Windows</span>
+        </a>
+        <p class="dl-meta num" id="dlMeta">Latest version</p>
+        <p class="dl-started" id="dlStarted" hidden>Your download has started. <a href="#install">Next, the three steps below.</a></p>
+        <div class="not-pc" id="notPc" hidden>
+          <p>WIland runs on a Windows PC. Open this page on your computer, or send yourself the link.</p>
+          <button type="button" class="copy" id="copyLink">Copy link</button>
+        </div>
+      </div>
+      <p class="small">Windows 10 or 11, 64-bit · Free · Updates itself</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="block" id="install">
+      <p class="label">Install</p>
+      <h2>Three steps, about a minute.</h2>
+      <p class="sub">WIland isn't signed with a certificate yet, so Windows doesn't know it and warns you twice. Both warnings are normal for a test version.</p>
+
+      <ol class="steps">
+        <li class="step">
+          <div class="pic pic-browser" aria-hidden="true">
+            <div class="b-card">
+              <div class="b-row"><span class="b-ico">!</span><span><b class="fname">WIland-Setup.exe</b> isn't commonly downloaded. Make sure you trust it before you open it.</span></div>
+              <div class="b-actions"><span class="b-btn">Delete</span><span class="b-btn hot">Keep</span></div>
+            </div>
+          </div>
+          <h3><span class="n">1</span>Keep the download</h3>
+          <p>If your browser says the file isn't commonly downloaded, choose <b>Keep</b>. In Edge, open the <b>⋯</b> menu next to the file, choose <b>Keep</b>, then <b>Show more</b> and <b>Keep anyway</b>.</p>
+        </li>
+
+        <li class="step">
+          <div class="pic pic-smart" aria-hidden="true">
+            <div class="s-card">
+              <div class="s-title">Windows protected your PC</div>
+              <div class="s-text">Microsoft Defender SmartScreen prevented an unrecognised app from starting.</div>
+              <div class="s-link hot-text">More info</div>
+              <div class="s-actions"><span class="s-btn hot">Run anyway</span><span class="s-btn">Don't run</span></div>
+            </div>
+          </div>
+          <h3><span class="n">2</span>Run it anyway</h3>
+          <p>Open the file. When the blue <b>Windows protected your PC</b> box appears, click <b>More info</b>, then <b>Run anyway</b>.</p>
+        </li>
+
+        <li class="step">
+          <div class="pic pic-done" aria-hidden="true">
+            <div class="d-screen">
+              <span class="d-island"></span>
+              <span class="d-arrow">↑</span>
+            </div>
+          </div>
+          <h3><span class="n">3</span>Install and look up</h3>
+          <p>Go through the installer (the usual folder is fine) and click <b>Finish</b>. WIland starts, and the island sits at the top centre of your screen.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="block">
+      <p class="label">What it does</p>
+      <h2>Everything at the top of the screen.</h2>
+      <div class="tiles">
+        <div class="tile">
+          <svg viewBox="0 0 24 24"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>
+          <h3>Media</h3>
+          <p>See what's playing in Spotify, your browser or any player, and pause, skip or seek.</p>
+        </div>
+        <div class="tile">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg>
+          <h3>Timers</h3>
+          <p>Start a timer or a focus session and watch it count down without opening anything.</p>
+        </div>
+        <div class="tile">
+          <svg viewBox="0 0 24 24"><rect x="2" y="7" width="17" height="10" rx="2.5"/><path d="M22 11v2M6 10.5v3M9.5 10.5v3"/></svg>
+          <h3>Battery and devices</h3>
+          <p>Battery, Bluetooth and Wi-Fi at a glance, with volume and brightness sliders.</p>
+        </div>
+        <div class="tile">
+          <svg viewBox="0 0 24 24"><path d="M3 7h18v12H3zM3 7l2-4h14l2 4M9 11h6"/></svg>
+          <h3>Shelf</h3>
+          <p>Drag files onto the island to set them aside, then drag them out where you need them.</p>
+        </div>
+        <div class="tile">
+          <svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2.5h6V4M9 10h6M9 14h4"/></svg>
+          <h3>Clipboard</h3>
+          <p>Everything you copy is kept, so you can paste something from earlier.</p>
+        </div>
+        <div class="tile">
+          <svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>
+          <h3>Launcher</h3>
+          <p>Press <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>Space</kbd> to find and open apps and files.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <p class="label">Getting around</p>
+      <h2>Hover, click, drag.</h2>
+      <ul class="moves">
+        <li><b>Peek</b><span>Move the pointer to the top centre of the screen.</span></li>
+        <li><b>Open</b><span>Click the island.</span></li>
+        <li><b>Switch pages</b><span>Right-click the left or right side of the open island, or swipe sideways on a touchpad.</span></li>
+        <li><b>Keep a file</b><span>Drag it onto the island.</span></li>
+        <li><b>Settings</b><span>Click the WIland icon in the taskbar's tray.</span></li>
+      </ul>
+    </section>
+
+    <section class="block last">
+      <div class="note">
+        <div>
+          <h3>You only download once.</h3>
+          <p>WIland checks for new versions by itself, downloads them quietly and installs them when you restart it.</p>
+        </div>
+        <div>
+          <h3>Found a problem?</h3>
+          <p>Use <b>Report a bug</b> in WIland. A screenshot and a line about what you were doing help a lot.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>WIland is made by <a href="https://newtnfx.com">NWTN</a>.</span>
+    <a href="https://github.com/ne-wtn/WIland-Releases/releases">All versions</a>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
