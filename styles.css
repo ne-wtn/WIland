@@ -258,6 +258,8 @@ kbd {
 }
 @media (max-width: 600px) {
   .hero-inner { padding-top: 172px; }
+  /* phones: the buttons sit in the middle of the space under the text */
+  .hero .get { flex: 1; justify-content: center; width: 100%; margin-top: 32px; }
   .dl-pair { gap: 10px; width: 100%; }
   .dl-item .btn { min-width: 0; padding-inline: 10px; font-size: 15.5px; }
   .dl-desc { font-size: 14px; }
