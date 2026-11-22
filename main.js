@@ -28,6 +28,7 @@
   const show = rel => {
     if (!rel) { links.forEach(a => { a.href = FALLBACK; }); return; }
     links.forEach(a => { a.href = rel.url; a.dataset.direct = '1'; });
+    document.getElementById('dlVer').textContent = `${rel.version} - ${Math.round(rel.size / 1048576)}MB`;
     document.querySelectorAll('.fname').forEach(el => { el.textContent = rel.name; });
   };
 
@@ -49,6 +50,7 @@
   const showWc = rel => {
     if (!rel) return; // the links already point at the latest release page
     wcLinks.forEach(a => { a.href = rel.url; });
+    document.getElementById('wcVer').textContent = `${rel.version} - ${Math.round(rel.size / 1048576)}MB`;
     const mb = Math.round(rel.size / 1048576);
     wcMeta.textContent = ['Version ' + rel.version, mb + ' MB', 'Android 10 or newer', 'Free'].join(' · ');
   };
