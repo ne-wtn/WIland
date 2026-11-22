@@ -107,19 +107,11 @@ kbd {
 .get { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
 .hero .get { align-items: center; margin-top: clamp(26px, 3vw, 40px); }
 
-/* the two downloads as one button, split down the middle */
-.dl-pair { display: grid; grid-template-columns: 1fr 1fr; column-gap: 0; row-gap: 10px; }
-.dl-half {
-  display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 14px 26px;
-  background: #fff; color: var(--ink); transition: background-color .15s;
-}
-.dl-half:first-child { border-radius: 8px 0 0 8px; box-shadow: inset -1px 0 0 rgba(14, 15, 17, .16); }
-.dl-half:nth-child(2) { border-radius: 0 8px 8px 0; }
-.dl-half:hover { background: var(--blue-100); }
-.dl-half:focus-visible { outline: 2px solid var(--blue-300); outline-offset: 3px; position: relative; z-index: 1; }
-.dl-half b { font-size: 17px; font-weight: 600; line-height: 1.2; white-space: nowrap; }
-.dl-half small { font-size: 12.5px; color: var(--grey); line-height: 1.3; }
-.dl-pair .dl-meta { padding-inline: 8px; }
+/* the two downloads, side by side, each with a line about it */
+.dl-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.dl-item { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.dl-item .btn { width: 100%; min-width: 220px; text-align: center; margin-bottom: 8px; }
+.dl-desc { font-size: 15px; font-weight: 500; color: #fff; }
 .dl-meta { font-size: 14px; color: rgba(255, 255, 255, .62); font-variant-numeric: tabular-nums; }
 .dl-started { font-size: 14px; }
 .dl-started a { text-decoration: underline; text-underline-offset: .25em; }
@@ -271,9 +263,9 @@ kbd {
 }
 @media (max-width: 600px) {
   .hero-inner { padding-top: 172px; }
-  .dl-half { padding: 12px 12px; }
-  .dl-half b { font-size: 15.5px; }
-  .dl-half small { font-size: 11.5px; }
+  .dl-pair { gap: 10px; width: 100%; }
+  .dl-item .btn { min-width: 0; padding-inline: 10px; font-size: 15.5px; }
+  .dl-desc { font-size: 14px; }
   .feats { grid-template-columns: 1fr; }
   .moves li { grid-template-columns: 1fr; gap: 2px; }
   .step, .steps--plain .step { grid-template-columns: 1fr; gap: 12px; }
