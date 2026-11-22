@@ -257,11 +257,11 @@ kbd {
   .footer-brand { grid-column: 1 / -1; }
 }
 @media (max-width: 600px) {
-  .hero-inner { padding-top: 172px; }
-  /* phones: the buttons sit in the middle of the space under the text */
-  .hero .get { flex: 1; justify-content: center; width: 100%; margin-top: 32px; }
-  .dl-pair { gap: 10px; width: 100%; }
-  .dl-item .btn { min-width: 0; padding-inline: 10px; font-size: 15.5px; }
+  .hero-inner { padding-top: 164px; }
+  /* phones: the buttons stacked, one above the other */
+  .hero .get { width: 100%; margin-top: 36px; }
+  .dl-pair { grid-template-columns: 1fr; gap: 18px; width: 100%; max-width: 320px; }
+  .dl-item .btn { min-width: 0; }
   .dl-desc { font-size: 14px; }
   .feats { grid-template-columns: 1fr; }
   .moves li { grid-template-columns: 1fr; gap: 2px; }
