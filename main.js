@@ -30,8 +30,7 @@
     if (!rel) { links.forEach(a => { a.href = FALLBACK; }); return; }
     links.forEach(a => { a.href = rel.url; a.dataset.direct = '1'; });
     const mb = Math.round(rel.size / 1048576);
-    const date = rel.date ? new Date(rel.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
-    meta.textContent = ['Version ' + rel.version, mb + ' MB', date].filter(Boolean).join(' · ');
+    meta.textContent = ['Version ' + rel.version, mb + ' MB'].join(' · ');
     document.querySelectorAll('.fname').forEach(el => { el.textContent = rel.name; });
   };
 
