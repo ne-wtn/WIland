@@ -68,24 +68,6 @@
       .catch(() => {});
   }
 
-  // not on a Windows PC: say so, and offer to copy the link
-  const ua = navigator.userAgent;
-  if (!(/Windows NT/.test(ua) && !/Windows Phone/.test(ua))) {
-    document.getElementById('notPc').hidden = false;
-    if (/Android/.test(ua)) document.getElementById('onAndroid').hidden = false;
-    const copy = document.getElementById('copyLink');
-    copy.addEventListener('click', async () => {
-      const link = location.href.split('#')[0];
-      try { await navigator.clipboard.writeText(link); copy.textContent = 'Copied'; }
-      catch {
-        const t = document.createElement('input');
-        t.value = link; document.body.appendChild(t); t.select();
-        try { document.execCommand('copy'); copy.textContent = 'Copied'; } catch { copy.textContent = link; }
-        t.remove();
-      }
-    });
-  }
-
   /* ---------- the island ---------- */
   const V = window.WL_VIEWS;
   if (!V) return;
