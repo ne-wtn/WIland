@@ -12,13 +12,13 @@
   const meta = document.getElementById('dlMeta');
   const started = document.getElementById('dlStarted');
 
-  const readCache = () => {
+  const readCache = (key = CACHE) => {
     try {
-      const c = JSON.parse(sessionStorage.getItem(CACHE));
+      const c = JSON.parse(sessionStorage.getItem(key));
       return c && Date.now() - c.at < CACHE_MS ? c.rel : null;
     } catch { return null; }
   };
-  const writeCache = rel => { try { sessionStorage.setItem(CACHE, JSON.stringify({ at: Date.now(), rel })); } catch {} };
+  const writeCache = (rel, key = CACHE) => { try { sessionStorage.setItem(key, JSON.stringify({ at: Date.now(), rel })); } catch {} };
 
   const pickRelease = json => {
     const exe = (json.assets || []).find(a => /^WIland-Setup-.+\.exe$/i.test(a.name));
@@ -45,10 +45,36 @@
   }
   links.forEach(a => a.addEventListener('click', () => { if (a.dataset.direct) started.hidden = false; }));
 
+  /* ---------- WIConnect: the newest WIConnect-x.y.z.apk ---------- */
+  const WC_API = 'https://api.github.com/repos/ne-wtn/WIConnect-Releases/releases/latest';
+  const WC_CACHE = 'wiconnect.latest';
+  const wcLinks = [...document.querySelectorAll('.js-wc')];
+  const wcMeta = document.getElementById('wcMeta');
+  const showWc = rel => {
+    if (!rel) return; // the links already point at the latest release page
+    wcLinks.forEach(a => { a.href = rel.url; });
+    const mb = Math.round(rel.size / 1048576);
+    wcMeta.textContent = ['Version ' + rel.version, mb + ' MB', 'Android 10 or newer', 'Free'].filter(Boolean).join(' · ');
+  };
+  const wcCached = readCache(WC_CACHE);
+  if (wcCached) showWc(wcCached);
+  else {
+    fetch(WC_API, { headers: { Accept: 'application/vnd.github+json' } })
+      .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then(json => {
+        const apk = (json.assets || []).find(a => /^WIConnect-.+\.apk$/i.test(a.name));
+        if (!apk) return;
+        const rel = { url: apk.browser_download_url, size: apk.size, version: String(json.tag_name || '').replace(/^v/, '') };
+        writeCache(rel, WC_CACHE); showWc(rel);
+      })
+      .catch(() => {});
+  }
+
   // not on a Windows PC: say so, and offer to copy the link
   const ua = navigator.userAgent;
   if (!(/Windows NT/.test(ua) && !/Windows Phone/.test(ua))) {
     document.getElementById('notPc').hidden = false;
+    if (/Android/.test(ua)) document.getElementById('onAndroid').hidden = false;
     const copy = document.getElementById('copyLink');
     copy.addEventListener('click', async () => {
       const link = location.href.split('#')[0];

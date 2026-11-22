@@ -113,6 +113,8 @@ kbd {
 .dl-started a { text-decoration: underline; text-underline-offset: .25em; }
 .not-pc { max-width: 340px; text-align: right; font-size: 14px; color: rgba(255, 255, 255, .8); }
 .not-pc p { margin-bottom: 10px; }
+.not-pc .on-android { margin: 14px 0 0; }
+.on-android a { text-decoration: underline; text-underline-offset: .25em; }
 
 /* ---------- bands ---------- */
 .band { padding-block: var(--band-pad); }
@@ -189,6 +191,13 @@ kbd {
 .feat-pic::after { width: 45%; height: 55%; right: 4%; top: -12%; background: radial-gradient(closest-side, rgba(195, 169, 240, .7), transparent); }
 .feat-pic .island-wrap { top: 0; }
 
+/* ---------- WIConnect ---------- */
+.get--start { align-items: flex-start; }
+.wc-setup { margin-top: clamp(56px, 7vw, 96px); }
+.wc-setup-h { font-size: var(--fs-h3); letter-spacing: -.03em; }
+.wc-setup .band-body { margin-top: 12px; }
+.steps--plain .step { grid-template-columns: 56px 1fr; }
+
 /* ---------- getting around ---------- */
 .moves { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
 .moves li { display: grid; grid-template-columns: 200px 1fr; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); }
@@ -249,6 +258,6 @@ kbd {
   .hero-inner { padding-top: 180px; min-height: 0; }
   .feats { grid-template-columns: 1fr; }
   .moves li { grid-template-columns: 1fr; gap: 2px; }
-  .step { grid-template-columns: 1fr; gap: 12px; }
+  .step, .steps--plain .step { grid-template-columns: 1fr; gap: 12px; }
   .step .pic { grid-column: auto; }
 }

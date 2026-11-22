@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>WIland Beta</title>
-  <meta name="description" content="Download WIland, a dynamic island for Windows, and install it in three steps.">
+  <meta name="description" content="Download WIland, a dynamic island for Windows, and install it in three steps. Add WIConnect to control your PC from your Android phone.">
   <meta name="theme-color" content="#0b0c0e">
   <meta name="color-scheme" content="dark">
   <link rel="icon" type="image/png" href="icon.png">
@@ -22,6 +22,7 @@
         <a href="#install">Install</a>
         <a href="#features">Features</a>
         <a href="#around">Getting around</a>
+        <a href="#wiconnect">WIConnect</a>
       </div>
       <div class="nav-right">
         <span class="nav-avail">Beta</span>
@@ -47,6 +48,7 @@
           <div class="not-pc" id="notPc" hidden>
             <p>WIland runs on a Windows PC. Open this page on your computer, or send yourself the link.</p>
             <button type="button" class="btn btn--ghost" id="copyLink">Copy link</button>
+            <p class="on-android" id="onAndroid" hidden>Already have WIland? <a href="#wiconnect">Get WIConnect for this phone.</a></p>
           </div>
         </div>
       </div>
@@ -167,6 +169,59 @@
       </div>
     </section>
 
+    <section class="band band--sky" id="wiconnect">
+      <div class="wrap band-split band-split--top">
+        <div>
+          <p class="band-label">WIConnect</p>
+          <h2>Your PC, from your phone.</h2>
+          <p class="band-body">WIConnect is WIland's companion app for Android. It puts shortcuts for the app you're in, a pointer and keyboard, your PC's screens, timers, music and the Shelf on your phone.</p>
+          <div class="get get--start">
+            <a class="btn btn--lg js-wc" href="https://github.com/ne-wtn/WIConnect-Releases/releases/latest">Download for Android</a>
+            <p class="dl-meta" id="wcMeta">Android 10 or newer · Free</p>
+          </div>
+        </div>
+        <ul class="moves">
+          <li><b>Pad</b><span>Shortcuts for the app in front on your PC, like After Effects, Premiere Pro and OBS Studio. Put buttons anywhere and size them.</span></li>
+          <li><b>Pointer and keyboard</b><span>Turn your phone to point, or use it as a trackpad. Tap a text box on the PC to type into it.</span></li>
+          <li><b>Live screens</b><span>Each of your PC's screens as live video, with the pointer moving on it. Touch the picture to work the mouse right there.</span></li>
+          <li><b>Apps and windows</b><span>Open any app with one tap, bring a window forward, and save setups to put them back later.</span></li>
+          <li><b>Timers and music</b><span>Timers follow you between PC and phone and ring wherever you are. What's playing on the PC, with controls, on your lock screen too.</span></li>
+          <li><b>Files and clipboard</b><span>Copy on one, paste on the other. Send files and folders to the Shelf, and save them from it.</span></li>
+          <li><b>Power</b><span>Lock, sleep, restart or shut down the PC.</span></li>
+        </ul>
+      </div>
+
+      <div class="wrap band-split band-split--top wc-setup">
+        <div>
+          <h3 class="wc-setup-h">Set it up</h3>
+          <p class="band-body">Your phone and PC need to be on the same Wi-Fi.</p>
+        </div>
+        <ol class="steps steps--plain">
+          <li class="step">
+            <span class="step-n">01</span>
+            <div class="step-txt">
+              <h3>Install it on your phone</h3>
+              <p>Download the <b>.apk</b> on your phone and open it. Android asks once to allow installing apps from your browser; allow it, then install.</p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step-n">02</span>
+            <div class="step-txt">
+              <h3>Pair it with WIland</h3>
+              <p>In WIland on your PC, open <b>Settings → WIConnect</b> and show the pairing code. Scan it with WIConnect.</p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step-n">03</span>
+            <div class="step-txt">
+              <h3>Keep both up to date</h3>
+              <p>When there's a new version, WIConnect's home says <b>WIConnect x.y.z is out</b>. Tap it to update. New versions need a recent WIland, which updates itself.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
     <section class="band band--white">
       <div class="wrap band-split">
         <h2>Found a problem?</h2>
@@ -190,6 +245,7 @@
           <ul>
             <li><a class="js-dl" href="https://github.com/ne-wtn/WIland-Releases/releases/latest">Latest version</a></li>
             <li><a href="https://github.com/ne-wtn/WIland-Releases/releases">All versions</a></li>
+            <li><a class="js-wc" href="https://github.com/ne-wtn/WIConnect-Releases/releases/latest">WIConnect for Android</a></li>
           </ul>
         </div>
         <div>
@@ -198,6 +254,7 @@
             <li><a href="#needs">What you need</a></li>
             <li><a href="#install">Install</a></li>
             <li><a href="#around">Getting around</a></li>
+            <li><a href="#wiconnect">WIConnect</a></li>
           </ul>
         </div>
       </div>
