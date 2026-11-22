@@ -31,7 +31,7 @@
     links.forEach(a => { a.href = rel.url; a.dataset.direct = '1'; });
     const mb = Math.round(rel.size / 1048576);
     const date = rel.date ? new Date(rel.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
-    meta.textContent = ['Version ' + rel.version, mb + ' MB', date, 'Windows 10 or 11, 64-bit'].filter(Boolean).join(' · ');
+    meta.textContent = ['Version ' + rel.version, mb + ' MB', date].filter(Boolean).join(' · ');
     document.querySelectorAll('.fname').forEach(el => { el.textContent = rel.name; });
   };
 
@@ -50,11 +50,13 @@
   const WC_CACHE = 'wiconnect.latest';
   const wcLinks = [...document.querySelectorAll('.js-wc')];
   const wcMeta = document.getElementById('wcMeta');
+  const wcHeroMeta = document.getElementById('wcHeroMeta');
   const showWc = rel => {
     if (!rel) return; // the links already point at the latest release page
     wcLinks.forEach(a => { a.href = rel.url; });
     const mb = Math.round(rel.size / 1048576);
-    wcMeta.textContent = ['Version ' + rel.version, mb + ' MB', 'Android 10 or newer', 'Free'].filter(Boolean).join(' · ');
+    wcMeta.textContent = ['Version ' + rel.version, mb + ' MB', 'Android 10 or newer', 'Free'].join(' · ');
+    wcHeroMeta.textContent = ['Version ' + rel.version, mb + ' MB'].join(' · ');
   };
   const wcCached = readCache(WC_CACHE);
   if (wcCached) showWc(wcCached);
